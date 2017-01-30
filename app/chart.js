@@ -13,7 +13,7 @@ var projection = d3.geoEquirectangular()
 
 var path = d3.geoPath(projection)
 
-d3.json('https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json', json=>{
+d3.json('app/map.geo.json', json=>{
     svg.append('path')
     .datum(json)
     .attr('d', path)
