@@ -4,9 +4,21 @@ import tip from 'd3-tip'
 const chart = () => {
     var width = 960,
         height = 600
+    var margin = {
+        top: 0, right: 100, bottom: 0, left: 0
+    }
     var svg = d3.select('body').append('svg')
+        .attr('class', 'container')
         .attr('width', width)
         .attr('height', height)
+    
+    var chartHeight = height - margin.top - margin.bottom,
+        chartWidth = width - margin.left - margin.right
+    var chart = svg.append('g')
+        .attr('class', 'chart')
+        .attr('transform', `translate(${margin.left},${margin.top})`)
+        .attr('width', chartWidth)
+        .attr('height', chartHeight)
     
     //tooltip
     var tooltip = tip().html(d=>`
@@ -19,16 +31,19 @@ const chart = () => {
     <strong>Recclass: </strong><span>${d.properties.recclass}</span>
 `)
     .attr('class', 'tooltip')
-    svg.call(tooltip)
+    chart.call(tooltip)
+    
+    
     
     var projection = d3.geoEquirectangular()
-        .translate([width / 2, height / 2])
+        .translate([chartWidth / 2, height / 2])
+        
 
     var path = d3.geoPath(projection)
     
     d3.json('app/custom.geo.json', json => {
 
-        svg.append('path')
+        chart.append('path')
             .datum(json)
             .attr('d', path)
 
@@ -41,13 +56,43 @@ const chart = () => {
             
             let extent = d3.extent(json.features, d=>parseInt(d.properties.year)) 
             var color = d3.scaleThreshold()
-                .range(d3.schemeCategory20)
-                .domain(d3.range(1600, 2000, 20))
+                .range(d3.schemeCategory20.slice(0, 12).slice(1).reverse())
+                .domain(d3.range(1600, 2000, 40))
             
+            
+            //legend
+            let legendContainer = d3.select('body').append('svg')
+                .attr('class', 'legend-container')
+                .attr('width', 60)
+                .attr('height', 200)
+            
+            legendContainer
+                .append('text')
+                .attr('transform', 'translate(10,20)')
+                .text('Year')
+            
+            let legend = legendContainer
+                .append('g')
+                .selectAll('.legend')
+                .data(color.domain().slice(1).reverse()).enter()
+                .append('g')
+                .attr("class", "legend")
+                .attr("transform", (d,i)=>`translate(0,${i*20 + 25})`)
+
+            legend.append('rect')
+                .attr('width', 10)
+                .attr('height', 20)
+                .style('fill', color)
+
+            legend.append('text')
+                .attr('x', 20)
+                .attr('y', 10)
+                .attr('dy', 5)
+                .text(String)
             
             let arr = json.features.map(d=>parseInt(d.properties.year))
             arr.sort(compareNumbers)
-            svg.selectAll('.point')
+            chart.selectAll('.point')
                 .data(json.features).enter()
                 .append('path')
                 .attr('class', 'point')

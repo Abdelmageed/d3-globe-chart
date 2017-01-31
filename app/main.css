@@ -4,13 +4,17 @@ body{
     padding:10px 0px;
     background:#f4f4f7;
 }
-svg{
-    display: block;
+.container{
+    width: 960px;
+    height: 600px;
+/*    display: block;*/
     margin: auto;
     background-color: darkblue;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0,0.9), 0 6px 20px 0 rgba(0, 0, 0, 0.75);
 }
-
+.legend-container{
+    margin-left: 10px;
+}
 .tooltip{
     background-color: dimgrey;
     color: white;
