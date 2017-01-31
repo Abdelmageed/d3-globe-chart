@@ -1,7 +1,28 @@
 body{
     text-align: center;
-    font-family: helvetica sans-serif 
+    font-family: helvetica sans-serif;
+    padding:10px 0px;
+    background:#f4f4f7;
 }
 svg{
+    display: block;
+    margin: auto;
     background-color: darkblue;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0,0.9), 0 6px 20px 0 rgba(0, 0, 0, 0.75);
+}
+
+.tooltip{
+    background-color: dimgrey;
+    color: white;
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 5%;
+}
+.point{
+    stroke-width: 0.5;
+    stroke: lightgrey;
+}
+.point-hovered{
+    stroke-width: 0.75;
+    stroke: crimson;
 }
