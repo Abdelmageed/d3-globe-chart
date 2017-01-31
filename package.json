@@ -39,7 +39,6 @@
   },
   "dependencies": {
     "d3": "^4.4.4",
-    "d3-scale-chromatic": "^1.1.0",
     "d3-tip": "^0.7.1",
     "gh-pages": "^0.12.0"
   }
