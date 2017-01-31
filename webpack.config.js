@@ -32,7 +32,7 @@ const common = {
     },
     plugins: [
         new htmlWebpackPlugin({
-            title: 'd3-heatmap - FreeCodeCamp'
+            title: 'D3 - Globe Chart'
         })
     ]
 }
