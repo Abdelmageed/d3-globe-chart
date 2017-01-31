@@ -9,10 +9,8 @@ const chart = () => {
 
     var projection = d3.geoEquirectangular()
         .translate([width / 2, height / 2])
-        //    .scale([1000])
 
     var path = d3.geoPath(projection)
-
     
     d3.json('app/custom.geo.json', json => {
 
@@ -20,38 +18,40 @@ const chart = () => {
             .datum(json)
             .attr('d', path)
 
-        //draw metorited landings on top of globe features
+        //draw meteorite landings on top of globe features
         d3.json('app/metorites.geo.json', json => {
             
-            var size = d3.scaleLog()
-                .range([1, 15])
-                .domain([2, Math.pow(2, 32)])
-            .base(2)
+            var size = d3.scaleThreshold()
+                .range([0, 1, 4, 6, 12])
+                .domain([0, 50000,  500000, 1000000])
             
-            console.log(size(20))
+            let extent = d3.extent(json.features, d=>parseInt(d.properties.year)) 
+            var color = d3.scaleThreshold()
+                .range(d3.schemeCategory20)
+                .domain(d3.range(1600, 2000, 20))
+            
+            
+            console.log(color(2000), color(1500), color(1000))
+            let arr = json.features.map(d=>parseInt(d.properties.year))
+            arr.sort(compareNumbers)
+            console.log(arr)
+//            console.log(size(20))
             svg.selectAll('path')
                 .data(json.features).enter()
                 .append('path')
                 .attr('d', path.pointRadius(d=>{
                     let mass = d.properties.mass
                     mass = (mass == 0 || mass === null)?0.01:+d.properties.mass
-                    console.log(size(mass))
                     return size(mass)}))
-                .attr('fill', 'white')
+                .attr('fill', d=>{
+                console.log(color(parseInt(d.properties.year)))
+                return color(parseInt(d.properties.year))})
         })
     })
 
 }
 
-function min(arr){
-    let min = Number.POSITIVE_INFINITY,
-        max = 0
-    for(let i = 1; i < arr.length; i++){
-        if (arr[i]){
-            if (min > arr[i]) min = arr[i]
-            if (max < arr[i]) max = arr[i]
-        }
-    }
-    return [min, max]
+function compareNumbers (a, b){
+    return a - b;
 }
 export default chart
