@@ -15,6 +15,10 @@ body{
 .legend-container{
     margin-left: 10px;
 }
+.overlay{
+    fill: none;
+    pointer-events: all;
+}
 .tooltip{
     background-color: dimgrey;
     color: white;

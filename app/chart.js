@@ -7,19 +7,37 @@ const chart = () => {
     var margin = {
         top: 0, right: 100, bottom: 0, left: 0
     }
+    var zoom = d3.zoom()
+        .scaleExtent([1, 8])
+        .translateExtent([[0, 0], [width, height]])
+        .on("zoom", zoomed)
+    
     var svg = d3.select('body').append('svg')
         .attr('class', 'container')
         .attr('width', width)
         .attr('height', height)
+        //appending a group doesn't seem to fix centering on zooming
+        .append('g')
+
     
     var chartHeight = height - margin.top - margin.bottom,
         chartWidth = width - margin.left - margin.right
+    
+    svg.append('rect')
+        .attr('class', 'overlay')
+        .attr('width', width)
+        .attr('height', height)
+    
     var chart = svg.append('g')
         .attr('class', 'chart')
         .attr('transform', `translate(${margin.left},${margin.top})`)
         .attr('width', chartWidth)
         .attr('height', chartHeight)
     
+    
+    svg.call(zoom)
+        .append('g')
+        
     //tooltip
     var tooltip = tip().html(d=>`
     <strong>Name: </strong><span>${d.properties.name}</span>
@@ -33,11 +51,15 @@ const chart = () => {
     .attr('class', 'tooltip')
     chart.call(tooltip)
     
-    
-    
+     
+     
     var projection = d3.geoEquirectangular()
         .translate([chartWidth / 2, height / 2])
         
+   function zoomed() {
+        let scale = d3.event.transform.k
+        chart.attr('transform', `scale(${scale},${scale}) translate(${d3.event.transform.x.toFixed(4)}${d3.event.transform.y.toFixed(4)})`)
+        }
 
     var path = d3.geoPath(projection)
     
