@@ -1,5 +1,7 @@
 import * as d3 from 'd3'
 import tip from 'd3-tip'
+import custom from './custom.geo.json'
+import metorites from './metorites.geo.json'
 
 const chart = () => {
     var width = 960,
@@ -7,21 +9,25 @@ const chart = () => {
     var margin = {
         top: 0, right: 100, bottom: 0, left: 0
     }
-    var zoom = d3.zoom()
-        .scaleExtent([1, 8])
-        .translateExtent([[0, 0], [width, height]])
-        .on("zoom", zoomed)
+    
+    
     
     var svg = d3.select('body').append('svg')
         .attr('class', 'container')
         .attr('width', width)
         .attr('height', height)
         //appending a group doesn't seem to fix centering on zooming
-        .append('g')
+//        .append('g')
 
     
     var chartHeight = height - margin.top - margin.bottom,
         chartWidth = width - margin.left - margin.right
+    
+    var zoom = d3.zoom()
+//        .extent([chartWidth / 2, chartHeight / 2])
+        .scaleExtent([1, 8])
+        .translateExtent([[0, 0], [width, height]])
+        .on("zoom", zoomed)
     
     svg.append('rect')
         .attr('class', 'overlay')
@@ -34,9 +40,9 @@ const chart = () => {
         .attr('width', chartWidth)
         .attr('height', chartHeight)
     
-    
-    svg.call(zoom)
-        .append('g')
+    svg
+        .call(zoom)
+//        .append('g')
         
     //tooltip
     var tooltip = tip().html(d=>`
@@ -63,20 +69,16 @@ const chart = () => {
 
     var path = d3.geoPath(projection)
     
-    d3.json('app/custom.geo.json', json => {
 
         chart.append('path')
-            .datum(json)
+            .datum(custom)
             .attr('d', path)
 
-        //draw meteorite landings on top of globe features
-        d3.json('app/metorites.geo.json', json => {
-            
             var size = d3.scaleThreshold()
                 .range([0, 1.5, 4, 6, 12])
                 .domain([0, 50000,  500000, 1000000])
             
-            let extent = d3.extent(json.features, d=>parseInt(d.properties.year)) 
+            let extent = d3.extent(metorites.features, d=>parseInt(d.properties.year)) 
             var color = d3.scaleThreshold()
                 .range(d3.schemeCategory20.slice(0, 12).slice(1).reverse())
                 .domain(d3.range(1600, 2000, 40))
@@ -112,10 +114,10 @@ const chart = () => {
                 .attr('dy', 5)
                 .text(String)
             
-            let arr = json.features.map(d=>parseInt(d.properties.year))
+            let arr = metorites.features.map(d=>parseInt(d.properties.year))
             arr.sort(compareNumbers)
             chart.selectAll('.point')
-                .data(json.features).enter()
+                .data(metorites.features).enter()
                 .append('path')
                 .attr('class', 'point')
                 .attr('d', path.pointRadius(d=>{
@@ -134,8 +136,6 @@ const chart = () => {
                 target.classed('point-hovered', false)
                 tooltip.hide()
             })
-        })
-    })
 
 }
 
