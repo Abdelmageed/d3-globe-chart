@@ -16501,21 +16501,25 @@ const chart = () => {
     var margin = {
         top: 0, right: 100, bottom: 0, left: 0
     }
-    var zoom = __WEBPACK_IMPORTED_MODULE_0_d3__["zoom"]()
-        .scaleExtent([1, 8])
-        .translateExtent([[0, 0], [width, height]])
-        .on("zoom", zoomed)
+    
+    
     
     var svg = __WEBPACK_IMPORTED_MODULE_0_d3__["select"]('body').append('svg')
         .attr('class', 'container')
         .attr('width', width)
         .attr('height', height)
         //appending a group doesn't seem to fix centering on zooming
-        .append('g')
+//        .append('g')
 
     
     var chartHeight = height - margin.top - margin.bottom,
         chartWidth = width - margin.left - margin.right
+    
+    var zoom = __WEBPACK_IMPORTED_MODULE_0_d3__["zoom"]()
+//        .extent([chartWidth / 2, chartHeight / 2])
+        .scaleExtent([1, 8])
+        .translateExtent([[0, 0], [width, height]])
+        .on("zoom", zoomed)
     
     svg.append('rect')
         .attr('class', 'overlay')
@@ -16528,9 +16532,9 @@ const chart = () => {
         .attr('width', chartWidth)
         .attr('height', chartHeight)
     
-    
-    svg.call(zoom)
-        .append('g')
+    svg
+        .call(zoom)
+//        .append('g')
         
     //tooltip
     var tooltip = __WEBPACK_IMPORTED_MODULE_1_d3_tip___default()().html(d=>`
@@ -16557,20 +16561,16 @@ const chart = () => {
 
     var path = __WEBPACK_IMPORTED_MODULE_0_d3__["geoPath"](projection)
     
-    __WEBPACK_IMPORTED_MODULE_0_d3__["json"]('app/custom.geo.json', json => {
 
         chart.append('path')
-            .datum(json)
+            .datum(__WEBPACK_IMPORTED_MODULE_2__custom_geo_json___default.a)
             .attr('d', path)
 
-        //draw meteorite landings on top of globe features
-        __WEBPACK_IMPORTED_MODULE_0_d3__["json"]('app/metorites.geo.json', json => {
-            
             var size = __WEBPACK_IMPORTED_MODULE_0_d3__["scaleThreshold"]()
                 .range([0, 1.5, 4, 6, 12])
                 .domain([0, 50000,  500000, 1000000])
             
-            let extent = __WEBPACK_IMPORTED_MODULE_0_d3__["extent"](json.features, d=>parseInt(d.properties.year)) 
+            let extent = __WEBPACK_IMPORTED_MODULE_0_d3__["extent"](__WEBPACK_IMPORTED_MODULE_3__metorites_geo_json___default.a.features, d=>parseInt(d.properties.year)) 
             var color = __WEBPACK_IMPORTED_MODULE_0_d3__["scaleThreshold"]()
                 .range(__WEBPACK_IMPORTED_MODULE_0_d3__["schemeCategory20"].slice(0, 12).slice(1).reverse())
                 .domain(__WEBPACK_IMPORTED_MODULE_0_d3__["range"](1600, 2000, 40))
@@ -16606,10 +16606,10 @@ const chart = () => {
                 .attr('dy', 5)
                 .text(String)
             
-            let arr = json.features.map(d=>parseInt(d.properties.year))
+            let arr = __WEBPACK_IMPORTED_MODULE_3__metorites_geo_json___default.a.features.map(d=>parseInt(d.properties.year))
             arr.sort(compareNumbers)
             chart.selectAll('.point')
-                .data(json.features).enter()
+                .data(__WEBPACK_IMPORTED_MODULE_3__metorites_geo_json___default.a.features).enter()
                 .append('path')
                 .attr('class', 'point')
                 .attr('d', path.pointRadius(d=>{
@@ -16628,8 +16628,6 @@ const chart = () => {
                 target.classed('point-hovered', false)
                 tooltip.hide()
             })
-        })
-    })
 
 }
 
