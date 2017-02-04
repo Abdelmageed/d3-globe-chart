@@ -25,8 +25,8 @@ const common = {
                 use: ['style-loader', 'css-loader']
             },
             {
-                test: /\.png/,
-                use: ['file-loader']
+                test: /\.json$/,
+                use: ['json-loader']
             }
         ]
     },
